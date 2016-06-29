@@ -49,7 +49,7 @@ class Alternative_Heap {
   }
 
   /**
-   * Clones all WordPress tables
+   * Clones all WordPress original tables to an alternative heap namespace
    */
   public function clone_wp_tables( $alt_heap ) {
     global $wpdb;
@@ -59,18 +59,42 @@ class Alternative_Heap {
 
     $tables = self::get_wp_tables();
     foreach ( $tables as $table ) {
-      $newtable = str_ireplace( $old_prefix, $alt_prefix, $table );
-      $query = wp_sprintf( "DROP TABLE IF EXISTS %s;", $newtable );
+      $new_table = str_ireplace( $old_prefix, $alt_prefix, $table );
+
+      set_time_limit(600); // allow up to 10 minutes for large db queries to finish
+      $query = wp_sprintf( "DROP TABLE IF EXISTS %s;", $new_table );
       $wpdb->query( $query );
-      $query = wp_sprintf( "CREATE TABLE %s LIKE %s;", $newtable, $table );
+
+      set_time_limit(600);
+      $query = wp_sprintf( "CREATE TABLE %s LIKE %s;", $new_table, $table );
       $wpdb->query( $query );
-      $query = wp_sprintf( "INSERT %s SELECT * FROM %s;", $newtable, $table );
+
+      set_time_limit(600);
+      $query = wp_sprintf( "INSERT %s SELECT * FROM %s;", $new_table, $table );
       $wpdb->query( $query );
+
+      // $wpdb->prefix is oddly used in other places too in the wp_options and
+      // usermeta tables. We need to search-replace those.
+      if( false !== strpos( $table, 'options' ) ) {
+        set_time_limit(600);
+        $query = wp_sprintf("UPDATE %s SET option_name='%suser_roles' WHERE option_name='%suser_roles';", $new_table, $alt_prefix, $old_prefix);
+        $wpdb->query( $query );
+      }
+      if( false !== strpos( $table, 'usermeta' ) ) {
+				$query = $wpdb->prepare("SELECT user_id, meta_key FROM $new_table WHERE meta_key LIKE %s;", str_replace( '_', '\_', $old_prefix ) . '%');
+				$meta_keys = $wpdb->get_results( $query );
+				foreach ( $meta_keys as $row ) {
+          $old_key = $row->meta_key;
+				  $new_key = str_replace( $old_prefix, $alt_prefix, $old_key );
+					$query = $wpdb->prepare("UPDATE $new_table SET meta_key=%s WHERE meta_key=%s;", $new_key, $old_key);
+					$wpdb->query( $query );
+				}
+      }
     }
   }
 
   /**
-   * Delete temp tables
+   * Delete temp tables from an alternative heap namespace
    */
   public function delete_tmp_wp_tables( $alt_heap = "" ) {
     global $wpdb;
@@ -84,6 +108,7 @@ class Alternative_Heap {
     // still, please back up databases, ok? :)
 
     foreach ( $tables as $table ) {
+      set_time_limit(600); // allow up to 10 minutes for large db queries to finish
       $query = wp_sprintf( "DROP TABLE IF EXISTS %s;", $table );
       $wpdb->query( $query );
     }
