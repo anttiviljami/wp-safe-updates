@@ -1,7 +1,17 @@
 # WordPress Safe Updates.
 [![Latest Stable Version](https://poser.pugx.org/anttiviljami/wp-safe-updates/v/stable)](https://packagist.org/packages/anttiviljami/wp-safe-updates) [![Total Downloads](https://poser.pugx.org/anttiviljami/wp-safe-updates/downloads)](https://packagist.org/packages/anttiviljami/wp-safe-updates) [![Latest Unstable Version](https://poser.pugx.org/anttiviljami/wp-safe-updates/v/unstable)](https://packagist.org/packages/anttiviljami/wp-safe-updates) [![License](https://poser.pugx.org/anttiviljami/wp-safe-updates/license)](https://packagist.org/packages/anttiviljami/wp-safe-updates)
 
-Tested updates for WordPress plugins
+Test WordPress plugin updates safely before applying them on the live site.
+
+## How does it work?
+
+The purpose of this plugin is to enable the WordPress user to easily test plugin updates in a safe environment before actually updating in production.
+
+We introduce a concept called *alternative heaps*, that work similarly to how WordPress Multisite works. When a certain cookie `_alt_heap` is defined, we tell WordPress temporarily to use a different set of database tables and different plugin directories.
+
+Upon creating an alternative heap for testing, we clone all database tables from the live ones, and create a new plugins directory filled with symlinks to plugins. When updating a plugin, we replace that symlink with the up-to-date version of that plugin.
+
+When updating a plugin, the user can choose to create an alternative heap where they can easily test the plugin before updating it on the live site.
 
 ## Screenshots
 
