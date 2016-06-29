@@ -6,7 +6,21 @@
  * environments to test updates.
  */
 class Alternative_Heap {
+  public static $instance;
+
+  public static function init() {
+    if ( is_null( self::$instance ) ) {
+      self::$instance = new Alternative_Heap();
+    }
+    return self::$instance;
+  }
+
   public function __construct() {
+    // display a notice at the bottom of the window when in an alternative heap
+    if( function_exists( 'currheap' ) && false !== currheap() ) {
+      add_action('admin_footer', array( $this, 'render_alternative_heap_indicator' ) );
+      add_action('wp_footer', array( $this, 'render_alternative_heap_indicator' ) );
+    }
   }
 
   /**
@@ -81,14 +95,14 @@ class Alternative_Heap {
         $wpdb->query( $query );
       }
       if( false !== strpos( $table, 'usermeta' ) ) {
-				$query = $wpdb->prepare("SELECT user_id, meta_key FROM $new_table WHERE meta_key LIKE %s;", str_replace( '_', '\_', $old_prefix ) . '%');
-				$meta_keys = $wpdb->get_results( $query );
-				foreach ( $meta_keys as $row ) {
+        $query = $wpdb->prepare("SELECT user_id, meta_key FROM $new_table WHERE meta_key LIKE %s;", str_replace( '_', '\_', $old_prefix ) . '%');
+        $meta_keys = $wpdb->get_results( $query );
+        foreach ( $meta_keys as $row ) {
           $old_key = $row->meta_key;
-				  $new_key = str_replace( $old_prefix, $alt_prefix, $old_key );
-					$query = $wpdb->prepare("UPDATE $new_table SET meta_key=%s WHERE meta_key=%s;", $new_key, $old_key);
-					$wpdb->query( $query );
-				}
+          $new_key = str_replace( $old_prefix, $alt_prefix, $old_key );
+          $query = $wpdb->prepare("UPDATE $new_table SET meta_key=%s WHERE meta_key=%s;", $new_key, $old_key);
+          $wpdb->query( $query );
+        }
       }
     }
   }
@@ -113,5 +127,18 @@ class Alternative_Heap {
       $wpdb->query( $query );
     }
   }
+
+  /**
+   * Display a notice at the bottom of the window when in an alternative heap
+   */
+  public function render_alternative_heap_indicator() {
+?>
+<style>#alt-heap-indicator { font-family: Arial, sans-serif; position: fixed; bottom: 0; left: 0; right: 0; width: 100%; color: #fff; background: #770000; z-index: 3000; font-size:18px; line-height: 1; text-align: center; padding: 5px }</style>
+<div id="alt-heap-indicator">
+<?php _e('You are currently in an alternative heap.', 'wp-safe-updates'); ?> (ID: <?php echo currheap(); ?>)
+</div>
+<?php
+  }
+
 }
 

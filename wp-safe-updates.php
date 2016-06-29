@@ -42,9 +42,11 @@ class Safe_Updates {
     // load textdomain for translations
     add_action( 'plugins_loaded',  array( $this, 'load_our_textdomain' ) );
 
+    require_once 'lib/class-alternative-heap.php';
+
+    $alt_heap = Alternative_Heap::init();
+
     if( isset( $_GET['tests'] ) ) {
-      require_once 'lib/class-alternative-heap.php';
-      $alt_heap = new Alternative_Heap();
 
       echo "<pre>";
       // Unit tests (sort of)  -->
