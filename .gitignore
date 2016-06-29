@@ -1,0 +1,5 @@
+vendor/*
+!.gitkeep
+!lang/.gitkeep
+.*~
+*~

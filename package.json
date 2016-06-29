@@ -1,0 +1,25 @@
+{
+  "name": "wp-safe-updates",
+  "version": "1.0.0",
+  "description": "Tested updates for WordPress plugins",
+  "main": "gulpfile.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/anttiviljami/wp-safe-updates.git"
+  },
+  "keywords": [
+    "wordpress",
+    "safe",
+    "tested",
+    "updates"
+  ],
+  "author": "anttiviljami",
+  "license": "GPL-3.0",
+  "bugs": {
+    "url": "https://github.com/anttiviljami/wp-safe-updates/issues"
+  },
+  "homepage": "https://github.com/anttiviljami/wp-safe-updates#readme"
+}

@@ -1,0 +1,13 @@
+{
+    "name": "anttiviljami/wp-safe-updates",
+    "description": "Tested updates for WordPress plugins",
+    "type": "wordpress-plugin",
+    "license": "GPLv3",
+    "authors": [
+        {
+            "name": "Antti Kuosmanen",
+            "email": "antti@seravo.fi"
+        }
+    ],
+    "require": {}
+}
