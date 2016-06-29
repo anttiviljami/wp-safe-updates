@@ -41,6 +41,47 @@ class Safe_Updates {
   private function __construct() {
     // load textdomain for translations
     add_action( 'plugins_loaded',  array( $this, 'load_our_textdomain' ) );
+
+    if( isset( $_GET['tests'] ) ) {
+      require_once 'lib/class-alternative-heap.php';
+      $alt_heap = new Alternative_Heap();
+
+      echo "<pre>";
+      // Unit tests (sort of)  -->
+      echo "Original WordPress tables: \n";
+      print_r( $alt_heap->get_wp_tables() );
+
+      echo "Cloning to 'test'... \n";
+      print_r( $alt_heap->clone_wp_tables('test') );
+
+      echo "Cloning to 'test2'... \n";
+      print_r( $alt_heap->clone_wp_tables('test2') );
+
+      echo "All tmp tables: \n";
+      print_r( $alt_heap->get_tmp_wp_tables() );
+
+      echo "All 'test' tables: \n";
+      print_r( $alt_heap->get_tmp_wp_tables('test') );
+
+      echo "Deleting 'test' tables... \n";
+      print_r( $alt_heap->delete_tmp_wp_tables('test') );
+
+      echo "All tmp tables: \n";
+      print_r( $alt_heap->get_tmp_wp_tables() );
+
+      echo "Deleting all tmp tables... \n";
+      print_r( $alt_heap->delete_tmp_wp_tables() );
+
+      echo "All tmp tables: \n";
+      print_r( $alt_heap->get_tmp_wp_tables() );
+
+      echo "Original WordPress tables: \n";
+      print_r( $alt_heap->get_wp_tables() );
+
+      // <-- Unit tests done
+      echo "</pre>";
+      wp_die();
+    }
   }
 
   /**
