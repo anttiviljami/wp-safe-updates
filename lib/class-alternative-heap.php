@@ -36,6 +36,16 @@ class Alternative_Heap {
   }
 
   /**
+   * Returns the plugins dir suffix for an alternative heap
+   */
+  public static function get_alt_suffix( $alt_heap = "" ) {
+    if( empty( $alt_heap ) ) {
+      return '';
+    }
+    return '_tmp_' . $alt_heap; // plugins_tmp_{alt_heap}
+  }
+
+  /**
    * Gets all the live WordPress prefixed tables (not our alternative ones)
    *
    * @return: An array of table names
@@ -127,6 +137,45 @@ class Alternative_Heap {
       $wpdb->query( $query );
     }
   }
+
+  /**
+   * Create a new plugins directory with symlinks to live plugins
+   */
+  public function create_alt_plugins_dir( $alt_heap = "" ) {
+    $orig_plugins_dir = WP_PLUGIN_DIR;
+    $alt_plugins_dir = WP_PLUGIN_DIR . self::get_alt_suffix( $alt_heap );
+
+    // panic and exit early if directories are the same
+    if( $orig_plugins_dir == $alt_plugins_dir ) {
+      return false;
+    }
+
+    // create the new plugins directory if it doesn't exist. Otherwise, empty it.
+    if ( ! file_exists( $alt_plugins_dir ) ) {
+      mkdir( $alt_plugins_dir );
+    }
+    else {
+      // OMG... RecursiveIteratorIterator. Standard PHP Lib, I love (hate) you <3
+      // We use the CHILD_FIRST flag here in order to delete directories inside the plugins dir first
+      $iterator = new RecursiveIteratorIterator( new RecursiveDirectoryIterator( $alt_plugins_dir ), RecursiveIteratorIterator::CHILD_FIRST );
+      foreach ( $iterator as $node ) {
+        if ( in_array( $node->getBasename(), array('.', '..') ) ) {
+          continue;
+        } elseif ( $node->isFile() || $node->isLink() ) {
+          unlink( $node->getPathname() );
+        } else {
+          rmdir( $node->getPathname() );
+        }
+      }
+    }
+
+    // we should now have an empty dir at $alt_plugins_dir
+    // let's symlink all plugins from the orig dir
+
+
+    print_r( $alt_plugins_dir . "\n" );
+  }
+
 
   /**
    * Display a notice at the bottom of the window when in an alternative heap

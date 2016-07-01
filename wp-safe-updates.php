@@ -65,6 +65,9 @@ class Safe_Updates {
       echo "All 'test' tables: \n";
       print_r( $alt_heap->get_tmp_wp_tables('test') );
 
+      echo "Creating plugin directory for 'test'... \n";
+      print_r( $alt_heap->create_alt_plugins_dir('test') );
+
       echo "Deleting 'test' tables... \n";
       print_r( $alt_heap->delete_tmp_wp_tables('test') );
 
