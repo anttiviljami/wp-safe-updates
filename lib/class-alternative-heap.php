@@ -185,6 +185,32 @@ class Alternative_Heap {
     return $alt_plugins_dir;
   }
 
+	/**
+   * Deletes the temp plugins dir for an alternative heap
+   */
+  public function delete_alt_plugins_dir( $alt_heap = "" ) {
+    $orig_plugins_dir = WP_PLUGIN_DIR;
+    $alt_plugins_dir = WP_PLUGIN_DIR . self::get_alt_suffix( $alt_heap );
+
+    // panic and exit early if directories are the same
+    if( $orig_plugins_dir == $alt_plugins_dir ) {
+      return false;
+    }
+
+		// recursively delete the alt plugins dir
+		$iterator = new RecursiveIteratorIterator( new RecursiveDirectoryIterator( $alt_plugins_dir ), RecursiveIteratorIterator::CHILD_FIRST );
+		foreach ( $iterator as $node ) {
+			if ( in_array( $node->getBasename(), array('.', '..') ) ) {
+				continue;
+			} elseif ( $node->isFile() || $node->isLink() ) {
+				unlink( $node->getPathname() );
+			} else {
+				rmdir( $node->getPathname() );
+			}
+		}
+		rmdir( $alt_plugins_dir );
+    return true;
+	}
 
   /**
    * Display a notice at the bottom of the window when in an alternative heap
