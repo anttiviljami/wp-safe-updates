@@ -159,7 +159,7 @@ class Alternative_Heap {
       // We use the CHILD_FIRST flag here in order to delete directories inside the plugins dir first
       $iterator = new RecursiveIteratorIterator( new RecursiveDirectoryIterator( $alt_plugins_dir ), RecursiveIteratorIterator::CHILD_FIRST );
       foreach ( $iterator as $node ) {
-        if ( in_array( $node->getBasename(), array('.', '..') ) ) {
+				if ( in_array( $node->getBasename(), array('.', '..') ) ) {
           continue;
         } elseif ( $node->isFile() || $node->isLink() ) {
           unlink( $node->getPathname() );
@@ -171,9 +171,18 @@ class Alternative_Heap {
 
     // we should now have an empty dir at $alt_plugins_dir
     // let's symlink all plugins from the orig dir
+    $iterator = new DirectoryIterator( $orig_plugins_dir );
+    foreach( $iterator as $node ) {
+			$basename = $node->getBasename();
+			if ( '.' === $basename[0] ) {
+				continue;
+			}
 
-
-    print_r( $alt_plugins_dir . "\n" );
+			// create symlink
+      $link_target = $alt_plugins_dir . DIRECTORY_SEPARATOR . $basename;
+      symlink( $node->getPath(), $link_target );
+    }
+    return $alt_plugins_dir;
   }
 
 
