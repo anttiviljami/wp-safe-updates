@@ -16,11 +16,54 @@ class Alternative_Heap {
   }
 
   public function __construct() {
+    add_action('init', array( $this, 'maybe_create_alt_heap' ) );
+
     // display a notice at the bottom of the window when in an alternative heap
     if( function_exists( 'currheap' ) && false !== currheap() ) {
       add_action('admin_footer', array( $this, 'render_alternative_heap_indicator' ) );
       add_action('wp_footer', array( $this, 'render_alternative_heap_indicator' ) );
     }
+  }
+
+  /**
+   * if $_GET[alt_heap] is defined and (@TODO: user has permissions), create that heap and return to it
+   */
+  public function maybe_create_alt_heap() {
+    if( ! isset( $_GET['alt_heap'] ) ) {
+      return; // nothing to do;
+    }
+
+    // @TODO: who is allowed to do this ?
+
+    $query_vars = $_GET;
+    $alt_heap = $query_vars['alt_heap'];
+
+    if( empty( $alt_heap ) || $alt_heap === 'clear' ) {
+      // clear the alt_heap cookie
+      setcookie('_alt_heap', '', 0, '/');
+    }
+    else {
+      // set the alt_heap cookie
+      setcookie('_alt_heap', $alt_heap, 0, '/');
+
+      // create plugins dir for alt_heap
+      $this->create_alt_plugins_dir( $alt_heap );
+
+      // clone tables for alt_heap
+      $this->clone_wp_tables( $alt_heap );
+
+      // no need for alt_heap in query string anymore
+      unset( $query_vars['alt_heap'] );
+    }
+
+    // rebuild query string
+    $query_string = http_build_query( $query_vars );
+    $request_uri = substr( $_SERVER['REQUEST_URI'], 0, strpos( $_SERVER['REQUEST_URI'], '?' ) );
+    $request_uri .= '?' . $query_string;
+
+    // redirect to requested page, but with alt heap this time
+    wp_redirect( $request_uri );
+    exit;
   }
 
   /**
