@@ -43,8 +43,10 @@ class Safe_Updates {
     add_action( 'plugins_loaded',  array( $this, 'load_our_textdomain' ) );
 
     require_once 'lib/class-alternative-heap.php';
+    require_once 'lib/class-update-logic.php';
 
     $alt_heap = Alternative_Heap::init();
+    $update_logic = Update_Logic::init();
 
     if( isset( $_GET['tests'] ) ) {
 
