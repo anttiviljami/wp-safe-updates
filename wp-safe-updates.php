@@ -68,11 +68,26 @@ class Safe_Updates {
       echo "Creating plugins directory for 'test'... \n";
       print_r( $alt_heap->create_alt_plugins_dir('test') );
 
+      echo "Creating plugins directory for 'test2'... \n";
+      print_r( $alt_heap->create_alt_plugins_dir('test2') );
+
+      echo "Alt plugin dirs: \n";
+      print_r( $alt_heap->get_alt_plugins_dirs() );
+
+      echo "'Test' plugin dirs: \n";
+      print_r( $alt_heap->get_alt_plugins_dirs('test') );
+
       echo "Deleting 'test' tables... \n";
       print_r( $alt_heap->delete_tmp_wp_tables('test') );
 
       echo "Deleting 'test' plugins directory... \n";
-      print_r( $alt_heap->delete_alt_plugins_dir('test') );
+      print_r( $alt_heap->delete_alt_plugins_dirs('test') );
+
+      echo "Deleting all tmp plugins directories... \n";
+      print_r( $alt_heap->delete_alt_plugins_dirs() );
+
+      echo "Alt plugin dirs: \n";
+      print_r( $alt_heap->get_alt_plugins_dirs() );
 
       echo "All tmp tables: \n";
       print_r( $alt_heap->get_tmp_wp_tables() );

@@ -159,7 +159,7 @@ class Alternative_Heap {
       // We use the CHILD_FIRST flag here in order to delete directories inside the plugins dir first
       $iterator = new RecursiveIteratorIterator( new RecursiveDirectoryIterator( $alt_plugins_dir ), RecursiveIteratorIterator::CHILD_FIRST );
       foreach ( $iterator as $node ) {
-				if ( in_array( $node->getBasename(), array('.', '..') ) ) {
+        if ( in_array( $node->getBasename(), array('.', '..') ) ) {
           continue;
         } elseif ( $node->isFile() || $node->isLink() ) {
           unlink( $node->getPathname() );
@@ -173,44 +173,75 @@ class Alternative_Heap {
     // let's symlink all plugins from the orig dir
     $iterator = new DirectoryIterator( $orig_plugins_dir );
     foreach( $iterator as $node ) {
-			$basename = $node->getBasename();
-			if ( '.' === $basename[0] ) {
-				continue;
-			}
+      $basename = $node->getBasename();
+      if ( '.' === $basename[0] ) {
+        continue;
+      }
 
-			// create symlink
+      // create symlink
       $link_target = $alt_plugins_dir . DIRECTORY_SEPARATOR . $basename;
-      symlink( $node->getPath(), $link_target );
+      symlink( $node->getRealPath(), $link_target );
     }
     return $alt_plugins_dir;
   }
 
-	/**
+  /**
+   * Returns existing alt plugins dir(s) as an array. If $alt_heap is defined, we return only that alt dir
+   */
+  public static function get_alt_plugins_dirs( $alt_heap = "" ) {
+    $dirs = array();
+    if( ! empty( $alt_heap ) ) {
+      // return $alt_heap dir if defined
+      $dirs[] = WP_PLUGIN_DIR . self::get_alt_suffix( $alt_heap );
+
+      // return false if no the alt heap dir doesn't exist
+      if( ! file_exists( $dirs[0] ) ) {
+        return false;
+      }
+    }
+    else {
+      // otherwise jsut return all alt plugin dirs
+      $iterator = new DirectoryIterator( dirname( WP_PLUGIN_DIR ) );
+      foreach( $iterator as $node ) {
+        $basename = $node->getBasename();
+        if( 0 === strpos( $basename, basename( WP_PLUGIN_DIR ) . '_tmp_' ) ) {
+          $dirs[] = $node->getPathname();
+        }
+      }
+    }
+    return $dirs;
+  }
+
+  /**
    * Deletes the temp plugins dir for an alternative heap
    */
-  public function delete_alt_plugins_dir( $alt_heap = "" ) {
+  public function delete_alt_plugins_dirs( $alt_heap = "" ) {
     $orig_plugins_dir = WP_PLUGIN_DIR;
-    $alt_plugins_dir = WP_PLUGIN_DIR . self::get_alt_suffix( $alt_heap );
+    $alt_dirs_to_delete = self::get_alt_plugins_dirs( $alt_heap );
 
-    // panic and exit early if directories are the same
-    if( $orig_plugins_dir == $alt_plugins_dir ) {
-      return false;
+    foreach( $alt_dirs_to_delete as $alt_plugins_dir ) {
+      // panic and exit early if directories are the same
+      if( $orig_plugins_dir == $alt_plugins_dir ) {
+        return false;
+      }
+
+      // recursively delete the alt plugins dir
+      $iterator = new RecursiveIteratorIterator( new RecursiveDirectoryIterator( $alt_plugins_dir ), RecursiveIteratorIterator::CHILD_FIRST );
+      foreach ( $iterator as $node ) {
+        if ( in_array( $node->getBasename(), array('.', '..') ) ) {
+          continue;
+        } elseif ( $node->isFile() || $node->isLink() ) {
+          unlink( $node->getPathname() );
+        } else {
+          rmdir( $node->getPathname() );
+        }
+      }
+
+      rmdir( $alt_plugins_dir );
     }
 
-		// recursively delete the alt plugins dir
-		$iterator = new RecursiveIteratorIterator( new RecursiveDirectoryIterator( $alt_plugins_dir ), RecursiveIteratorIterator::CHILD_FIRST );
-		foreach ( $iterator as $node ) {
-			if ( in_array( $node->getBasename(), array('.', '..') ) ) {
-				continue;
-			} elseif ( $node->isFile() || $node->isLink() ) {
-				unlink( $node->getPathname() );
-			} else {
-				rmdir( $node->getPathname() );
-			}
-		}
-		rmdir( $alt_plugins_dir );
     return true;
-	}
+  }
 
   /**
    * Display a notice at the bottom of the window when in an alternative heap
