@@ -3,8 +3,10 @@
 
 Test WordPress plugin updates safely before applying them on the live site.
 
-# WARNING
+## WARNING
 **This plugin is still a work in progress and is not recommended to install on a production site.**
+
+Core trac ticket discussion: [#37301](https://core.trac.wordpress.org/ticket/37301)
 
 ## How does it work?
 
