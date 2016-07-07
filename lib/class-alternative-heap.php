@@ -33,29 +33,29 @@ class Alternative_Heap {
       return; // nothing to do;
     }
 
-    // @TODO: who is allowed to do this ?
-
-    // had a discussion with @onnimonni about this. Probably only allow logged
-    // in admins / superadmins to create new heaps. When using a heap
-
-    // See issue #1 for more on this.
-
     $query_vars = $_GET;
     $alt_heap = $query_vars['alt_heap'];
 
-    if( empty( $alt_heap ) || $alt_heap === 'clear' ) {
-      // clear the alt_heap cookie
-      setcookie('_alt_heap', '', 0, '/');
+    if( $alt_heap === 'clear' ) {
+      // this means we want to clear the heap cookie
+      // equivalent to empty ?alt_heap=
+      $alt_heap = '';
     }
-    else {
-      // set the alt_heap cookie
-      setcookie('_alt_heap', $alt_heap, 0, '/');
 
+    // not in a heap yet and GET alt_heap is defined and current user has plugin install privileges
+    if( ! empty( $alt_heap ) && current_user_can( 'install_plugins' ) && ! currheap() ) {
       // create plugins dir for alt_heap
       $this->create_alt_plugins_dir( $alt_heap );
 
       // clone tables for alt_heap
       $this->clone_wp_tables( $alt_heap );
+
+      // set the _alt_heap cookie
+      setcookie('_alt_heap', $alt_heap, 0, '/');
+    }
+    else {
+      // clear the alt heap cookie
+      setcookie('_alt_heap', '', 0, '/');
     }
 
     // no need for alt_heap in query string anymore
@@ -64,7 +64,7 @@ class Alternative_Heap {
     // rebuild query string
     $query_string = http_build_query( $query_vars );
     $request_uri = substr( $_SERVER['REQUEST_URI'], 0, strpos( $_SERVER['REQUEST_URI'], '?' ) );
-    $request_uri .= '?' . $query_string;
+    $request_uri .= empty( $query_string ) ? '' : '?' . $query_string;
 
     // redirect to requested page, but with alt heap this time
     wp_redirect( $request_uri );
