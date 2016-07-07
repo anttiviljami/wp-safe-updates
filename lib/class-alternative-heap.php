@@ -35,6 +35,11 @@ class Alternative_Heap {
 
     // @TODO: who is allowed to do this ?
 
+    // had a discussion with @onnimonni about this. Probably only allow logged
+    // in admins / superadmins to create new heaps. When using a heap
+
+    // See issue #1 for more on this.
+
     $query_vars = $_GET;
     $alt_heap = $query_vars['alt_heap'];
 
@@ -51,10 +56,10 @@ class Alternative_Heap {
 
       // clone tables for alt_heap
       $this->clone_wp_tables( $alt_heap );
-
-      // no need for alt_heap in query string anymore
-      unset( $query_vars['alt_heap'] );
     }
+
+    // no need for alt_heap in query string anymore
+    unset( $query_vars['alt_heap'] );
 
     // rebuild query string
     $query_string = http_build_query( $query_vars );
