@@ -15,7 +15,8 @@ When updating a plugin, the user can choose to create an alternative heap where 
 
 ## Screenshots
 
-Screenshots here
+### The 'test update' button when an update is available for a plugin
+![Test update](/assets/screenshot-1.png)
 
 ## Installation
 
