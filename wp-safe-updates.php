@@ -64,12 +64,15 @@ class Safe_Updates {
       // @TODO: offer to do this automatically
       add_action( 'admin_notices', array( $this, 'not_configured_notice' ) );
     }
+
+    // clear all heaps on uninstall
+    register_uninstall_hook( __FILE__, array( 'Safe_Updates', 'uninstall_cleanup' ) );
   }
 
   /**
    * shows a notice to prompt the user to configure WP Safe Updates
    */
-  function not_configured_notice() {
+  public function not_configured_notice() {
 ?>
 <div class="notice notice-warning is-dismissible">
   <?php $configure_action = 'https://github.com/anttiviljami/wp-safe-updates#configuration'; ?>
@@ -142,6 +145,20 @@ class Safe_Updates {
     // <-- Unit tests done
     echo "</pre>";
     wp_die();
+  }
+
+  /**
+   * Delete all alternative heap directories and tables on uninstall
+   */
+  public static function uninstall_cleanup() {
+    require_once 'lib/class-alternative-heap.php';
+    $alt_heap = Alternative_Heap::init();
+
+    // Deleting all tmp plugins directories...
+    $alt_heap->delete_alt_plugins_dirs();
+
+    // Deleting all tmp tables...
+    $alt_heap->delete_tmp_wp_tables();
   }
 
   /**
