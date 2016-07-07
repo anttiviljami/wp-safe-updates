@@ -1,9 +1,9 @@
 <?php
 /**
- * Plugin name: WordPress Safe Updates
+ * Plugin name: WP Safe Updates
  * Plugin URI: https://github.com/anttiviljami/wp-safe-updates
- * Description: Tested updates for WordPress plugins
- * Version: 1.0
+ * Description: Test WordPress plugin updates safely before applying them on the live site.
+ * Version: 1.0.1
  * Author: @anttiviljami
  * Author URI: https://github.com/anttiviljami
  * License: GPLv3
@@ -54,10 +54,6 @@ class Safe_Updates {
 
       $this->alt_heap = Alternative_Heap::init();
       $this->update_logic = Update_Logic::init();
-
-      if( isset( $_GET['tests'] ) ) {
-        $this->run_tests();
-      }
     }
     else {
       // show a notice to prompt the user to configure WP Safe Updates
@@ -68,6 +64,7 @@ class Safe_Updates {
     // clear all heaps on uninstall
     register_uninstall_hook( __FILE__, array( 'Safe_Updates', 'uninstall_cleanup' ) );
   }
+
 
   /**
    * shows a notice to prompt the user to configure WP Safe Updates
@@ -81,71 +78,6 @@ class Safe_Updates {
 <?php
   }
 
-  /**
-   * Unit tests (kind of)
-   */
-  private function run_tests() {
-    echo "<pre>";
-
-    // Unit tests (sort of)  -->
-    echo "Original WordPress tables: \n";
-    print_r( $this->alt_heap->get_wp_tables() );
-
-    echo "Cloning to 'test'... \n";
-    $this->alt_heap->clone_wp_tables('test');
-
-    echo "Cloning to 'test2'... \n";
-    $this->alt_heap->clone_wp_tables('test2');
-
-    echo "All tmp tables: \n";
-    print_r( $this->alt_heap->get_tmp_wp_tables() );
-
-    echo "All 'test' tables: \n";
-    print_r( $this->alt_heap->get_tmp_wp_tables('test') );
-
-    echo "Creating plugins directory for 'test'... \n";
-    $this->alt_heap->create_alt_plugins_dir('test');
-
-    echo "Creating plugins directory for 'test2'... \n";
-    $this->alt_heap->create_alt_plugins_dir('test2');
-
-    echo "Alt plugin dirs: \n";
-    print_r( $this->alt_heap->get_alt_plugins_dirs() );
-
-    echo "'Test' plugin dir: \n";
-    print_r( $this->alt_heap->get_alt_plugins_dirs('test') );
-
-    echo "Deleting 'test' tables... \n";
-    $this->alt_heap->delete_tmp_wp_tables('test');
-
-    echo "Deleting 'test' plugins directory... \n";
-    $this->alt_heap->delete_alt_plugins_dirs('test');
-
-    echo "Alt plugin dirs: \n";
-    print_r( $this->alt_heap->get_alt_plugins_dirs() );
-
-    echo "Deleting all tmp plugins directories... \n";
-    $this->alt_heap->delete_alt_plugins_dirs();
-
-    echo "Alt plugin dirs: \n";
-    print_r( $this->alt_heap->get_alt_plugins_dirs() );
-
-    echo "All tmp tables: \n";
-    print_r( $this->alt_heap->get_tmp_wp_tables() );
-
-    echo "Deleting all tmp tables... \n";
-    $this->alt_heap->delete_tmp_wp_tables();
-
-    echo "All tmp tables: \n";
-    print_r( $this->alt_heap->get_tmp_wp_tables() );
-
-    echo "Original WordPress tables: \n";
-    print_r( $this->alt_heap->get_wp_tables() );
-
-    // <-- Unit tests done
-    echo "</pre>";
-    wp_die();
-  }
 
   /**
    * Delete all alternative heap directories and tables on uninstall
@@ -160,6 +92,7 @@ class Safe_Updates {
     // Deleting all tmp tables...
     $alt_heap->delete_tmp_wp_tables();
   }
+
 
   /**
    * Load our textdomain

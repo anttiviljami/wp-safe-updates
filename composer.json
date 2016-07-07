@@ -1,6 +1,6 @@
 {
     "name": "anttiviljami/wp-safe-updates",
-    "description": "Tested updates for WordPress plugins",
+    "description": "Test WordPress plugin updates safely before applying them on the live site.",
     "type": "wordpress-plugin",
     "license": "GPLv3",
     "authors": [
