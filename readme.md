@@ -16,7 +16,13 @@ When updating a plugin, the user can choose to create an alternative heap where 
 ## Screenshots
 
 ### The 'test update' button when an update is available for a plugin
-![Test update](/assets/screenshot-1.png)
+![Test update link](/assets/screenshot-1.png)
+
+### Updating the plugin safely in an alternative heap
+![Updating a plugin](/assets/screenshot-2.png)
+
+### Testing the updated plugin
+![Testing the update](/assets/screenshot-3.png)
 
 ## Installation
 
@@ -48,7 +54,7 @@ Paste these lines to your `wp-config.php`.
  * WordPress Safe Updates required configuration
  */
 function currheap() {
-  return isset( $_COOKIE['_alt_heap'] ) && ! empty( $_COOKIE['_alt_heap'] ) ? preg_replace('/[^a-z0-9]/', '', strtolower( $_COOKIE['_alt_heap'] ) ) : false;
+  return isset( $_COOKIE['_alt_heap'] ) && ! empty( $_COOKIE['_alt_heap'] ) ? preg_replace('/[^a-z0-9_]/', '', strtolower( $_COOKIE['_alt_heap'] ) ) : false;
 }
 defined( 'WP_CONTENT_DIR' ) || define('WP_CONTENT_DIR', dirname(__FILE__) . '/wp-content');
 defined( 'WP_CONTENT_URL' ) || define('WP_CONTENT_URL', '/wp-content');

@@ -296,9 +296,10 @@ class Alternative_Heap {
    */
   public function render_alternative_heap_indicator() {
 ?>
-<style>#alt-heap-indicator { font-family: Arial, sans-serif; position: fixed; bottom: 0; left: 0; right: 0; width: 100%; color: #fff; background: #770000; z-index: 3000; font-size:18px; line-height: 1; text-align: center; padding: 5px }</style>
+<style>#alt-heap-indicator { font-family: Arial, sans-serif; position: fixed; bottom: 0; left: 0; right: 0; width: 100%; color: #fff; background: #770000; z-index: 10000; font-size:18px; line-height: 1; text-align: center; padding: 5px } #alt-heap-indicator a { color: #fff !important; text-decoration: underline; }</style>
 <div id="alt-heap-indicator">
-<?php _e('You are currently in an alternative heap.', 'wp-safe-updates'); ?> (ID: <?php echo currheap(); ?>)
+<?php echo wp_sprintf( __('You are currently testing updates. Any changes you make will not be saved.', 'wp-safe-updates'), currheap() ); ?>
+ <a href="<?php echo admin_url('plugins.php?alt_heap=clear'); ?>"><?php _e('Finish tests', 'wp-safe-updates'); ?></a>
 </div>
 <?php
   }
