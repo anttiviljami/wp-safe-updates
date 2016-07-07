@@ -2,15 +2,15 @@
 Contributors: Zuige
 Tags: safe, tested, updates
 Donate link: https://github.com/anttiviljami
-Requires at least: 4.5.2
-Tested up to: 4.5.2
+Requires at least: 4.0
+Tested up to: 4.5.3
 Stable tag: 1.0
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
 == Description ==
 
-Tested updates for WordPress plugins
+Test WordPress plugin updates safely before applying them on the live site.
 
 **Contributing**
 
@@ -20,9 +20,25 @@ https://github.com/anttiviljami/wp-safe-updates
 
 == Installation ==
 
-1. Upload plugin to the `/wp-content/plugins/` directory.
-2. Activate the plugin through the "Plugins" menu in WordPress.
-3. Installation done!
+**Configuration**
+
+Paste these lines to your `wp-config.php`.
+
+`/**
+ * WordPress Safe Updates required configuration
+ */
+function currheap() {
+  return isset( $_COOKIE['_alt_heap'] ) && ! empty( $_COOKIE['_alt_heap'] ) ? preg_replace('/[^a-z0-9_]/', '', strtolower( $_COOKIE['_alt_heap'] ) ) : false;
+}
+defined( 'WP_CONTENT_DIR' ) || define('WP_CONTENT_DIR', dirname(__FILE__) . '/wp-content');
+defined( 'WP_CONTENT_URL' ) || define('WP_CONTENT_URL', '/wp-content');
+if( false !== currheap() ) {
+  defined( 'WP_PLUGIN_DIR' ) || define( 'WP_PLUGIN_DIR', WP_CONTENT_DIR . '/plugins_tmp_' . currheap() );
+  defined( 'WP_PLUGIN_URL' ) || define( 'WP_PLUGIN_URL', WP_CONTENT_URL . '/plugins_tmp_' . currheap() );
+  defined( 'PLUGINDIR' ) || define( 'PLUGINDIR', 'wp-content/plugins_tmp_' . currheap() );
+}`
+
+And copy the `db.php` file from this plugin to your wp-content directory.
 
 == Frequently Asked Questions ==
 
@@ -30,7 +46,9 @@ None yet.
 
 == Screenshots ==
 
-1. No screenshots yet
+1. The 'test update' button when an update is available for a plugin
+2. Updating the plugin safely in an alternative heap
+3. Testing the updated plugin
 
 == Changelog ==
 

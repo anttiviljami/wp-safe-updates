@@ -3,6 +3,9 @@
 
 Test WordPress plugin updates safely before applying them on the live site.
 
+# WARNING
+**This plugin is still a work in progress and is not recommended to install on a production site.**
+
 ## How does it work?
 
 The purpose of this plugin is to enable the WordPress user to easily test plugin updates in a safe environment before actually updating in production.
