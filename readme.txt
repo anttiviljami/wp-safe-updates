@@ -12,6 +12,10 @@ License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
 Test WordPress plugin updates safely before applying them on the live site.
 
+This plugin adds a "test update" button when plugin updates are available. Clicking it triggers the creation of a sandbox where the user can safely test updating plugins without affecting the live site. Once the user is finished testing the plugin, they can go back to the live site and do updates if they like.
+
+The sandbox works similarly to how WordPress multisite works. We tell WordPress to temporarily use a different database prefix and a different plugins directory while in the alternative heap (sandbox). This is done by sending WordPress a special _alt_heap cookie.
+
 **Contributing**
 
 Please contribute to this project on Github. Pull requests welcome!

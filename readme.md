@@ -7,13 +7,9 @@ Core trac ticket discussion: [#37301](https://core.trac.wordpress.org/ticket/373
 
 ## How does it work?
 
-The purpose of this plugin is to enable the WordPress user to easily test plugin updates in a safe environment before actually updating in production.
+This plugin adds a "test update" button when plugin updates are available. Clicking it triggers the creation of a sandbox where the user can safely test updating plugins without affecting the live site. Once the user is finished testing the plugin, they can go back to the live site and do updates if they like.
 
-We introduce a concept called *alternative heaps*, that work similarly to how WordPress Multisite works. When a certain cookie `_alt_heap` is defined, we tell WordPress temporarily to use a different set of database tables and different plugin directories.
-
-Upon creating an alternative heap for testing, we clone all database tables from the live ones, and create a new plugins directory filled with symlinks to plugins. When updating a plugin, we replace that symlink with the up-to-date version of that plugin.
-
-When updating a plugin, the user can choose to create an alternative heap where they can easily test the plugin before updating it on the live site.
+The sandbox works similarly to how WordPress multisite works. We tell WordPress to temporarily use a different database prefix and a different plugins directory while in the alternative heap (sandbox). This is done by sending WordPress a special _alt_heap cookie.
 
 ## Screenshots
 
