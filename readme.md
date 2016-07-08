@@ -38,6 +38,8 @@ wp plugin activate wp-safe-updates
 
 ### The Old Fashioned Way
 
+This plugin is available on the [official WordPress.org plugin directory](https://wordpress.org/plugins/wp-safe-updates/).
+
 You can also install the plugin by directly uploading the zip file as instructed below:
 
 1. [Download the plugin](archive/master.zip)
