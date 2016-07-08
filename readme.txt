@@ -1,4 +1,4 @@
-=== WordPress Safe Updates ===
+=== WP Safe Updates ===
 Contributors: Zuige
 Tags: safe, tested, updates
 Donate link: https://github.com/anttiviljami
