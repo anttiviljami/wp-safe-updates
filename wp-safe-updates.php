@@ -72,7 +72,7 @@ class Safe_Updates {
   public function not_configured_notice() {
 ?>
 <div class="notice notice-warning is-dismissible">
-  <?php $configure_action = 'https://github.com/anttiviljami/wp-safe-updates#configuration'; ?>
+  <?php $configure_action = 'https://wordpress.org/plugins/wp-safe-updates/installation/'; ?>
   <p><?php echo wp_sprintf( __('WP Safe Updates is not yet active. Please <a href="%s" target="_blank">configure</a> it.', 'wp-safe-updates'), $configure_action ); ?> <button type="button" class="notice-dismiss"></button></p>
 </div>
 <?php
