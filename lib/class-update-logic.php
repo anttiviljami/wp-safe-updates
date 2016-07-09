@@ -15,6 +15,9 @@ class Update_Logic {
       // clear the symlink before updating a plugin so we don't accidentally do
       // anything with the live plugin
       add_filter( 'upgrader_pre_install', array( $this, 'unlink_old_plugin' ), 20, 2 );
+
+      // disable maintenance mode
+      add_filter( 'upgrader_package_options', array( $this, 'hack_disable_maintenance_mode' ) );
     }
     else {
       // hack the update notification string in update.php
@@ -30,6 +33,20 @@ class Update_Logic {
       return __('There is a new version of %1$s available. <a href="%2$s" class="thickbox open-plugin-details-modal" aria-label="%3$s">View version %4$s details</a>, <a href="%5$s&alt_heap=update">test update</a> or <a href="%5$s" class="update-link" aria-label="%6$s">update now</a>.');
     }
     return $translated_text;
+  }
+
+  /**
+   * HACK: Disable maintenance mode right after enabling it in alt heaps
+   */
+  public function hack_disable_maintenance_mode( $options ) {
+    global $wp_filesystem;
+
+    // delete the .maintenance file if it exists
+    $file = $wp_filesystem->abspath() . '.maintenance';
+    $wp_filesystem->delete( $file );
+
+    // $options should be unchanged
+    return $options;
   }
 
   /**
