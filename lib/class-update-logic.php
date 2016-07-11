@@ -39,11 +39,13 @@ class Update_Logic {
    * HACK: Disable maintenance mode right after enabling it in alt heaps
    */
   public function hack_disable_maintenance_mode( $options ) {
-    global $wp_filesystem;
+    // doesn't work in < 4.6
+    //global $wp_filesystem;
+
 
     // delete the .maintenance file if it exists
-    $file = $wp_filesystem->abspath() . '.maintenance';
-    $wp_filesystem->delete( $file );
+    //$file = $wp_filesystem->abspath() . '.maintenance';
+    //$wp_filesystem->delete( $file );
 
     // $options should be unchanged
     return $options;
