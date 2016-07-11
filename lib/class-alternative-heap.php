@@ -20,9 +20,26 @@ class Alternative_Heap {
 
     // display a notice at the bottom of the window when in an alternative heap
     if( function_exists( 'currheap' ) && false !== currheap() ) {
+      add_filter('plugins_url', array( $this, 'fix_plugins_url' ) );
       add_action('admin_footer', array( $this, 'render_alternative_heap_indicator' ) );
       add_action('wp_footer', array( $this, 'render_alternative_heap_indicator' ) );
     }
+  }
+
+  /**
+   * Plugins url fix
+   *
+   * There seems to be some strange caching going on with plugin asset urls
+   * Let's make sure we never compare the original string
+   *
+   * @note This is magic and I have no idea why it works...
+   */
+  public function fix_plugins_url( $url, $path, $plugin ) {
+    if( false !== strpos( $url, '/plugins/' ))
+      $die = true;
+
+    if($die) wp_die(); // i have no idea how this works but it does, so...
+    return $url;
   }
 
   /**
