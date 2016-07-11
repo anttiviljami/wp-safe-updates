@@ -24,9 +24,11 @@ https://github.com/anttiviljami/wp-safe-updates
 
 == Installation ==
 
-**Configuration**
+Install and activate the plugin via wp-admin.
 
-Paste these lines to your `wp-config.php`.
+Then copy the `db.php` file from this plugin to your `wp-content` directory.
+
+Finally, paste these lines to your `wp-config.php`.
 
 `/**
  * WordPress Safe Updates required configuration
@@ -41,8 +43,6 @@ if( false !== currheap() ) {
   defined( 'WP_PLUGIN_URL' ) || define( 'WP_PLUGIN_URL', WP_CONTENT_URL . '/plugins_tmp_' . currheap() );
   defined( 'PLUGINDIR' ) || define( 'PLUGINDIR', 'wp-content/plugins_tmp_' . currheap() );
 }`
-
-And copy the `db.php` file from this plugin to your wp-content directory.
 
 == Frequently Asked Questions ==
 

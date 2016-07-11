@@ -48,7 +48,9 @@ You can also install the plugin by directly uploading the zip file as instructed
 
 ## Configuration
 
-Paste these lines to your `wp-config.php`.
+First copy the `db.php` file from this plugin to your `wp-content` directory.
+
+Then just paste these lines to your `wp-config.php`.
 ```php
 /**
  * WordPress Safe Updates required configuration
@@ -65,4 +67,3 @@ if( false !== currheap() ) {
 }
 ```
 
-And copy the `db.php` file from this plugin to your wp-content directory.
