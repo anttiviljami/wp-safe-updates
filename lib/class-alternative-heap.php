@@ -30,13 +30,14 @@ class Alternative_Heap {
    * Plugins url fix
    *
    * There seems to be some strange caching going on with plugin asset urls
-   * Let's make sure we never compare the original string
-   *
-   * @note This is magic and I have no idea why it works...
+   * Let's make sure we never return the original plugins dir
    */
   public function fix_plugins_url( $url, $path = "", $plugin = "") {
-    if( false !== strpos( $url, '/plugins/' ))
-      wp_die(); // i have no idea how this works but it does, so...
+    $plugins_dir = WP_PLUGIN_DIR;
+    $default_plugins_dir = preg_replace( '#' . preg_quote( basename( $plugins_dir ) ) . '#', 'plugins', $plugins_dir );
+    if( false !== strpos( $url, $default_plugins_dir ) ) {
+      $url = preg_replace( '#' . preg_quote( $default_plugins_dir ) . '#', '', $url );
+    }
     return $url;
   }
 

@@ -3,7 +3,7 @@
  * Plugin name: WP Safe Updates
  * Plugin URI: https://github.com/anttiviljami/wp-safe-updates
  * Description: Test WordPress plugin updates safely before applying them on the live site.
- * Version: 1.0.5-alpha
+ * Version: 1.0.6-alpha
  * Author: @anttiviljami
  * Author URI: https://github.com/anttiviljami
  * License: GPLv3
