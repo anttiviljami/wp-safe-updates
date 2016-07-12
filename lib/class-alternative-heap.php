@@ -34,11 +34,9 @@ class Alternative_Heap {
    *
    * @note This is magic and I have no idea why it works...
    */
-  public function fix_plugins_url( $url, $path, $plugin ) {
+  public function fix_plugins_url( $url, $path = "", $plugin = "") {
     if( false !== strpos( $url, '/plugins/' ))
-      $die = true;
-
-    if($die) wp_die(); // i have no idea how this works but it does, so...
+      wp_die(); // i have no idea how this works but it does, so...
     return $url;
   }
 
