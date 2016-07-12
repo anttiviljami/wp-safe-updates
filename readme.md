@@ -5,6 +5,10 @@ Test WordPress plugin updates safely before applying them on the live site.
 
 Core trac ticket discussion: [#37301](https://core.trac.wordpress.org/ticket/37301)
 
+## Disclaimer
+
+**Please make sure to always have backups of all your WordPress files and database before updating plugins or themes. We are not responsible for any misuse, deletions, white screens, fatal errors, or any other issue arising from using this plugin.**
+
 ## How does it work?
 
 This plugin adds a "test update" button when plugin updates are available. Clicking it triggers the creation of a sandbox where the user can safely test updating plugins without affecting the live site. Once the user is finished testing the plugin, they can go back to the live site and do updates if they like.

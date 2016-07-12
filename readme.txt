@@ -16,6 +16,10 @@ This plugin adds a "test update" button when plugin updates are available. Click
 
 The sandbox works similarly to how WordPress multisite works. We tell WordPress to temporarily use a different database prefix and a different plugins directory while in the alternative heap (sandbox). This is done by sending WordPress a special _alt_heap cookie.
 
+**Disclaimer**
+
+Please make sure to always have backups of all your WordPress files and database before updating plugins or themes. We are not responsible for any misuse, deletions, white screens, fatal errors, or any other issue arising from using this plugin.
+
 **Contributing**
 
 Please contribute to this project on Github. Pull requests welcome!
