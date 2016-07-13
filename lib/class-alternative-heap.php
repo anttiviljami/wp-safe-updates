@@ -27,17 +27,18 @@ class Alternative_Heap {
   }
 
   /**
-   * Plugins url fix
+   * plugins_url() fix
    *
-   * There seems to be some strange caching going on with plugin asset urls
-   * Let's make sure we never return the original plugins dir
+   * When symlinked, the plugins still think they are being run in their
+   * realpath. This may cause issues for plugins_url since plugin_basename will
+   * not work correctly. Since we can't hook directly there, we'll do it in
+   * here.
    */
   public function fix_plugins_url( $url, $path = "", $plugin = "") {
     $plugins_dir = WP_PLUGIN_DIR;
     $default_plugins_dir = preg_replace( '#' . preg_quote( basename( $plugins_dir ) ) . '#', 'plugins', $plugins_dir );
-    if( false !== strpos( $url, $default_plugins_dir ) ) {
-      $url = preg_replace( '#' . preg_quote( $default_plugins_dir ) . '#', '', $url );
-    }
+    $url = preg_replace( '#' . preg_quote( $plugins_dir ) . '#', '', $url );
+    $url = preg_replace( '#' . preg_quote( $default_plugins_dir ) . '#', '', $url );
     return $url;
   }
 
