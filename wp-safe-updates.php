@@ -54,6 +54,10 @@ class Safe_Updates {
 
       $this->alt_heap = Alternative_Heap::init();
       $this->update_logic = Update_Logic::init();
+
+      if( false !== currheap() ) {
+        add_action( 'plugins_loaded', array( $this, 'make_sure_we_are_first' ) );
+      }
     }
     else {
       // show a notice to prompt the user to configure WP Safe Updates
@@ -65,6 +69,20 @@ class Safe_Updates {
     register_uninstall_hook( __FILE__, array( 'Safe_Updates', 'uninstall_cleanup' ) );
   }
 
+  /**
+   * When in an alternative heap, make sure this plugin is loaded first
+   */
+  public function make_sure_we_are_first() {
+    $active_plugins = get_option( 'active_plugins' );
+    $this_plugin = basename( dirname( __FILE__ ) ) . '/' . basename( __FILE__ );
+    $priority = array_search( $this_plugin, $active_plugins );
+
+    if ( 0 !== $priority ) {
+      array_splice( $active_plugins, $priority, 1 );
+      array_unshift( $active_plugins, $this_plugin );
+      update_option( 'active_plugins', $active_plugins );
+    }
+  }
 
   /**
    * shows a notice to prompt the user to configure WP Safe Updates
