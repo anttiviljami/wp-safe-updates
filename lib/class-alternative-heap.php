@@ -312,6 +312,9 @@ class Alternative_Heap {
    * Display a notice at the bottom of the window when in an alternative heap
    */
   public function render_alternative_heap_indicator() {
+    // filter whether to show the alt_heap_indicator when inside an alternative heap
+    $show_indicator = apply_filters( 'show_alt_heap_indicator', true );
+    if( $show_indicator ) :
 ?>
 <style>#alt-heap-indicator { font-family: Arial, sans-serif; position: fixed; bottom: 0; left: 0; right: 0; width: 100%; color: #fff; background: #770000; z-index: 10000; font-size:18px; line-height: 1; text-align: center; padding: 5px } #alt-heap-indicator a { color: #fff !important; text-decoration: underline; }</style>
 <div id="alt-heap-indicator">
@@ -319,7 +322,7 @@ class Alternative_Heap {
  <a href="<?php echo admin_url('plugins.php?alt_heap=clear'); ?>"><?php _e('Finish tests', 'wp-safe-updates'); ?></a>
 </div>
 <?php
+    endif;
   }
-
 }
 
