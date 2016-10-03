@@ -29,8 +29,13 @@ class Update_Logic {
    * HACK: filter the gettext value of the update string for a plugin
    */
   public function hack_plugin_update_text( $translated_text, $untranslated_text, $domain ) {
+		// Before 4.6
     if( $untranslated_text === 'There is a new version of %1$s available. <a href="%2$s" class="thickbox open-plugin-details-modal" aria-label="%3$s">View version %4$s details</a> or <a href="%5$s" class="update-link" aria-label="%6$s">update now</a>.' ) {
       return __('There is a new version of %1$s available. <a href="%2$s" class="thickbox open-plugin-details-modal" aria-label="%3$s">View version %4$s details</a>, <a href="%5$s&alt_heap=update">test update</a> or <a href="%5$s" class="update-link" aria-label="%6$s">update now</a>.');
+    }
+    // WP 4.6 ->
+    if( $untranslated_text === 'There is a new version of %1$s available. <a href="%2$s" %3$s>View version %4$s details</a> or <a href="%5$s" %6$s>update now</a>.' ) {
+      return __('There is a new version of %1$s available. <a href="%2$s" %3$s>View version %4$s details</a>, <a href="%5$s&alt_heap=update">test update</a> or <a href="%5$s" %6$s>update now</a>.');
     }
     return $translated_text;
   }
