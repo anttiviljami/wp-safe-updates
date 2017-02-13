@@ -7,6 +7,8 @@ Core trac ticket discussion: [#37301](https://core.trac.wordpress.org/ticket/373
 
 ## Disclaimer
 
+**The current version of WP Safe Updates has been known to have issues with WordPress 4.7. Please do not use on production sites for the time being!**
+
 **Please make sure to always have backups of all your WordPress files and database before updating plugins or themes. We are not responsible for any misuse, deletions, white screens, fatal errors, or any other issue arising from using this plugin.**
 
 ## How does it work?
