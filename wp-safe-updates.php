@@ -34,8 +34,8 @@ class Safe_Updates {
   public $alt_heap;
   public $update_logic;
 
+  public static $dropin_file = __DIR__ . '/db.php.txt';
   public static $dropin_target = WP_CONTENT_DIR . '/db.php';
-  public static $dropin_file = __DIR__ . '/db.php';
 
   public static function init() {
     if ( is_null( self::$instance ) ) {
@@ -97,7 +97,7 @@ class Safe_Updates {
 ?>
 <div class="notice notice-warning is-dismissible">
   <?php $configure_action = 'https://wordpress.org/plugins/wp-safe-updates/installation/'; ?>
-  <p><?php echo wp_sprintf( __('WP Safe Updates is not yet active. Please copy the <pre>db.php</pre> file inside this plugin to your wp-content directory.', 'wp-safe-updates'), $configure_action ); ?> <button type="button" class="notice-dismiss"></button></p>
+  <p><?php echo wp_sprintf( __('WP Safe Updates is not yet active. Please copy and rename the <code>db.php.txt</code> file from this plugin to <code>wp-content/db.php</code>', 'wp-safe-updates'), $configure_action ); ?> <button type="button" class="notice-dismiss"></button></p>
 </div>
 <?php
   }
