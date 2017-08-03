@@ -23,6 +23,7 @@ class Alternative_Heap {
       add_filter('plugins_url', array( $this, 'fix_plugins_url' ) );
       add_action('admin_footer', array( $this, 'render_alternative_heap_indicator' ) );
       add_action('wp_footer', array( $this, 'render_alternative_heap_indicator' ) );
+      add_action('login_footer', array( $this, 'render_alternative_heap_indicator' ) );
     }
   }
 
