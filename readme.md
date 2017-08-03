@@ -50,24 +50,3 @@ You can also install the plugin by directly uploading the zip file as instructed
 2. Upload to the plugin to /wp-content/plugins/ via the WordPress plugin uploader or your preferred method
 3. Activate the plugin
 
-## Configuration
-
-First copy the `db.php` file from this plugin to your `wp-content` directory.
-
-Then just paste these lines to your `wp-config.php`.
-```php
-/**
- * WordPress Safe Updates required configuration
- */
-function currheap() {
-  return isset( $_COOKIE['_alt_heap'] ) && ! empty( $_COOKIE['_alt_heap'] ) ? preg_replace('/[^a-z0-9_]/', '', strtolower( $_COOKIE['_alt_heap'] ) ) : false;
-}
-defined( 'WP_CONTENT_DIR' ) || define( 'WP_CONTENT_DIR', dirname( __FILE__ ) . '/wp-content' );
-defined( 'WP_CONTENT_URL' ) || define( 'WP_CONTENT_URL', '/wp-content' );
-if ( false !== currheap() ) {
-  defined( 'WP_PLUGIN_DIR' ) || define( 'WP_PLUGIN_DIR', WP_CONTENT_DIR . '/plugins_tmp_' . currheap() );
-  defined( 'WP_PLUGIN_URL' ) || define( 'WP_PLUGIN_URL', WP_CONTENT_URL . '/plugins_tmp_' . currheap() );
-  defined( 'PLUGINDIR' ) || define( 'PLUGINDIR', 'wp-content/plugins_tmp_' . currheap() );
-}
-```
-

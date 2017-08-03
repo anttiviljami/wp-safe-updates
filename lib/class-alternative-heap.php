@@ -118,8 +118,13 @@ class Alternative_Heap {
    * Derives the original db prefix from an alt heap prefix
    */
   public static function derive_orig_prefix( $alt_prefix ) {
-    global $wpdb;
-    $orig_prefix = substr( $alt_prefix, 0, strpos( $alt_prefix, 'tmp_' ) );
+    $offset = strpos( $alt_prefix, 'tmp_' ) ? strpos( $alt_prefix, 'tmp_' ) : strlen( $alt_prefix );
+    $orig_prefix = substr( $alt_prefix, 0, $offset );
+
+    // fall back to wp_ if all else fails
+    if( empty( $orig_prefix ) ) {
+      return 'wp_';
+    }
     return $orig_prefix;
   }
 
@@ -140,8 +145,8 @@ class Alternative_Heap {
    */
   public static function get_wp_tables() {
     global $wpdb;
-    $orig_prefix = $_COOKIE['_alt_heap'] ? self::derive_orig_prefix( $wpdb->prefix ) : $wpdb->prefix;
-    $tables = $wpdb->get_results( $wpdb->prepare( "SHOW TABLES LIKE %s;", str_replace( '_', '\_', $wpdb->prefix ) . '%' ), ARRAY_N );
+    $orig_prefix = isset( $_COOKIE['_alt_heap'] ) ? self::derive_orig_prefix( $wpdb->prefix ) : $wpdb->prefix;
+    $tables = $wpdb->get_results( $wpdb->prepare( "SHOW TABLES LIKE %s;", str_replace( '_', '\_', $orig_prefix ) . '%' ), ARRAY_N );
     $tables = array_map( 'reset', $tables );
 
     // no alternative tables
@@ -157,7 +162,7 @@ class Alternative_Heap {
   public static function get_tmp_wp_tables( $alt_heap = "" ) {
     global $wpdb;
     // alt prefix will already be $wpdb->prefix if currently in a heap
-    $alt_prefix = $_COOKIE['_alt_heap'] ? $wpdb->prefix : self::get_alt_prefix( $alt_heap );
+    $alt_prefix = isset( $_COOKIE['_alt_heap'] ) ? $wpdb->prefix : self::get_alt_prefix( $alt_heap );
     $tables = $wpdb->get_results( $wpdb->prepare( "SHOW TABLES LIKE %s;", str_replace( '_', '\_', $alt_prefix ) . '%' ), ARRAY_N );
     $tables = array_map( 'reset', $tables );
     return $tables;

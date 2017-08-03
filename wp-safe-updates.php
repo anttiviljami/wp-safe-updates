@@ -65,6 +65,9 @@ class Safe_Updates {
       add_action( 'admin_notices', array( $this, 'not_configured_notice' ) );
     }
 
+    // configure custom dropin
+    register_activation_hook( __FILE__, array( 'Safe_Updates', 'install_custom_dropin' ) );
+
     // clear all heaps on uninstall
     register_uninstall_hook( __FILE__, array( 'Safe_Updates', 'uninstall_cleanup' ) );
   }
@@ -98,6 +101,17 @@ class Safe_Updates {
 
 
   /**
+   * Configure our custom db.php dropin
+   */
+  public static function install_custom_dropin() {
+    if ( ! file_exists( WP_CONTENT_DIR . '/db.php' ) ) {
+      $dropin_file = dirname( __FILE__ ) . '/db.php';
+      error_log('Copying ' . $dropin_file . ' -> ' . WP_CONTENT_DIR . '/db.php');
+      @copy( $dropin_file, WP_CONTENT_DIR . '/db.php' );
+    }
+  }
+
+  /**
    * Delete all alternative heap directories and tables on uninstall
    */
   public static function uninstall_cleanup() {
@@ -110,7 +124,6 @@ class Safe_Updates {
     // Deleting all tmp tables...
     $alt_heap->delete_tmp_wp_tables();
   }
-
 
   /**
    * Load our textdomain
