@@ -54,11 +54,21 @@ class Alternative_Heap {
     $query_vars = $_GET;
     $alt_heap = $query_vars['alt_heap'];
 
-    if( $alt_heap === 'clear' ) {
+    if ( $alt_heap === 'clean' ) {
+      // this means we want to clean the alt heap temp files and tables
+      $this->delete_alt_plugins_dirs( $_COOKIE['_alt_heap'] );
+      $this->delete_tmp_wp_tables( $_COOKIE['_alt_heap'] );
+
+      // and then clear the cookie
+      $alt_heap = '';
+    }
+
+    if( $alt_heap === 'clear' || $alt_heap === 'exit' ) {
       // this means we want to clear the heap cookie
       // equivalent to empty ?alt_heap=
       $alt_heap = '';
     }
+
 
     // not in a heap yet and GET alt_heap is defined and current user has plugin install privileges
     if( ! empty( $alt_heap ) && current_user_can( 'install_plugins' ) && ! currheap() ) {
@@ -84,6 +94,9 @@ class Alternative_Heap {
     $request_uri = substr( $_SERVER['REQUEST_URI'], 0, strpos( $_SERVER['REQUEST_URI'], '?' ) );
     $request_uri .= empty( $query_string ) ? '' : '?' . $query_string;
 
+    // flush caches for this just in case
+    wp_cache_flush();
+
     // redirect to requested page, but with alt heap this time
     wp_redirect( $request_uri );
     exit;
@@ -99,6 +112,15 @@ class Alternative_Heap {
       $alt_prefix .= $alt_heap . '_';
     }
     return $alt_prefix;
+  }
+
+  /**
+   * Derives the original db prefix from an alt heap prefix
+   */
+  public static function derive_orig_prefix( $alt_prefix ) {
+    global $wpdb;
+    $orig_prefix = substr( $alt_prefix, 0, strpos( $alt_prefix, 'tmp_' ) );
+    return $orig_prefix;
   }
 
   /**
@@ -118,7 +140,8 @@ class Alternative_Heap {
    */
   public static function get_wp_tables() {
     global $wpdb;
-    $tables = $wpdb->get_results( $wpdb->prepare( "SHOW TABLES LIKE %s;", str_replace( '_', '\_', $wpdb->prefix) . '%' ), ARRAY_N );
+    $orig_prefix = $_COOKIE['_alt_heap'] ? self::derive_orig_prefix( $wpdb->prefix ) : $wpdb->prefix;
+    $tables = $wpdb->get_results( $wpdb->prepare( "SHOW TABLES LIKE %s;", str_replace( '_', '\_', $wpdb->prefix ) . '%' ), ARRAY_N );
     $tables = array_map( 'reset', $tables );
 
     // no alternative tables
@@ -133,7 +156,9 @@ class Alternative_Heap {
    */
   public static function get_tmp_wp_tables( $alt_heap = "" ) {
     global $wpdb;
-    $tables = $wpdb->get_results( $wpdb->prepare( "SHOW TABLES LIKE %s;", str_replace( '_', '\_', self::get_alt_prefix( $alt_heap ) ) . '%' ), ARRAY_N );
+    // alt prefix will already be $wpdb->prefix if currently in a heap
+    $alt_prefix = $_COOKIE['_alt_heap'] ? $wpdb->prefix : self::get_alt_prefix( $alt_heap );
+    $tables = $wpdb->get_results( $wpdb->prepare( "SHOW TABLES LIKE %s;", str_replace( '_', '\_', $alt_prefix ) . '%' ), ARRAY_N );
     $tables = array_map( 'reset', $tables );
     return $tables;
   }
@@ -257,16 +282,22 @@ class Alternative_Heap {
   public static function get_alt_plugins_dirs( $alt_heap = "" ) {
     $dirs = array();
     if( ! empty( $alt_heap ) ) {
-      // return $alt_heap dir if defined
-      $dirs[] = WP_PLUGIN_DIR . self::get_alt_suffix( $alt_heap );
+      $suffix = self::get_alt_suffix( $alt_heap );
 
-      // return false if no the alt heap dir doesn't exist
+      // WP_PLUGIN_DIR will be the alt heap dir if in an alt heap
+      if ( strpos( WP_PLUGIN_DIR, $suffix ) ) {
+        $dirs[] = WP_PLUGIN_DIR;
+      } else {
+        $dirs[] = WP_PLUGIN_DIR . self::get_alt_suffix( $alt_heap );
+      }
+
+      // return false if the alt heap dir doesn't exist
       if( ! file_exists( $dirs[0] ) ) {
         return false;
       }
     }
     else {
-      // otherwise jsut return all alt plugin dirs
+      // otherwise just return all alt plugin dirs
       $iterator = new DirectoryIterator( dirname( WP_PLUGIN_DIR ) );
       foreach( $iterator as $node ) {
         $basename = $node->getBasename();
@@ -275,6 +306,7 @@ class Alternative_Heap {
         }
       }
     }
+
     return $dirs;
   }
 
@@ -282,7 +314,8 @@ class Alternative_Heap {
    * Deletes the temp plugins dir for an alternative heap
    */
   public function delete_alt_plugins_dirs( $alt_heap = "" ) {
-    $orig_plugins_dir = WP_PLUGIN_DIR;
+    $suffix = self::get_alt_suffix( $alt_heap );
+    $orig_plugins_dir = str_replace( $suffix, '', WP_PLUGIN_DIR );
     $alt_dirs_to_delete = self::get_alt_plugins_dirs( $alt_heap );
 
     foreach( $alt_dirs_to_delete as $alt_plugins_dir ) {
@@ -320,7 +353,7 @@ class Alternative_Heap {
 <style>#alt-heap-indicator { font-family: Arial, sans-serif; position: fixed; bottom: 0; left: 0; right: 0; width: 100%; color: #fff; background: #770000; z-index: 10000; font-size:18px; line-height: 1; text-align: center; padding: 5px } #alt-heap-indicator a { color: #fff !important; text-decoration: underline; }</style>
 <div id="alt-heap-indicator">
 <?php echo wp_sprintf( __('You are currently testing updates. Any changes you make will not be saved.', 'wp-safe-updates'), currheap() ); ?>
- <a href="<?php echo admin_url('plugins.php?alt_heap=clear'); ?>"><?php _e('Finish tests', 'wp-safe-updates'); ?></a>
+ <a href="<?php echo admin_url('plugins.php?alt_heap=clean'); ?>"><?php _e('Finish tests', 'wp-safe-updates'); ?></a>
 </div>
 <?php
     endif;
