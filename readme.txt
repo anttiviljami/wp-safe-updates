@@ -4,7 +4,7 @@ Tags: safe, tested, updates
 Donate link: https://github.com/anttiviljami
 Requires at least: 4.5
 Tested up to: 4.6.1
-Stable tag: 1.2.1
+Stable tag: 1.2.2
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -12,9 +12,9 @@ License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
 Test WordPress plugin updates safely before applying them on the live site.
 
-This plugin adds a "test update" button when plugin updates are available. Clicking it triggers the creation of a sandbox where the user can safely test updating plugins without affecting the live site. Once the user is finished testing the plugin, they can go back to the live site and do updates if they like.
+This plugin adds a "test update" button when plugin updates are available. Clicking it will trigger the creation of a sandbox where you can safely test updating plugins without affecting the live site. Once finished testing the plugin, you can go back to the live site and do the real updates if all is well.
 
-The sandbox works similarly to how WordPress multisite works. We tell WordPress to temporarily use a different database prefix and a different plugins directory while in the alternative heap (sandbox). This is done by sending WordPress a special _alt_heap cookie.
+The sandbox works similarly to how WordPress multisite works. We basically tell WordPress to temporarily use a different database prefix and a different plugins directory while in the sandbox, which means while you test the update, no changes are made to the live site.
 
 **Disclaimer**
 

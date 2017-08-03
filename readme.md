@@ -11,9 +11,9 @@ Core trac ticket discussion: [#37301](https://core.trac.wordpress.org/ticket/373
 
 ## How does it work?
 
-This plugin adds a "test update" button when plugin updates are available. Clicking it triggers the creation of a sandbox where the user can safely test updating plugins without affecting the live site. Once the user is finished testing the plugin, they can go back to the live site and do updates if they like.
+This plugin adds a "test update" button when plugin updates are available. Clicking it will trigger the creation of a sandbox where you can safely test updating plugins without affecting the live site. Once finished testing the plugin, you can go back to the live site and do the real updates if all is well.
 
-The sandbox works similarly to how WordPress multisite works. We tell WordPress to temporarily use a different database prefix and a different plugins directory while in the alternative heap (sandbox). This is done by sending WordPress a special _alt_heap cookie.
+The sandbox works similarly to how WordPress multisite works. We basically tell WordPress to temporarily use a different database prefix and a different plugins directory while in the sandbox, which means while you test the update, no changes are made to the live site.
 
 ## Screenshots
 
