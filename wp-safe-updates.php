@@ -34,6 +34,9 @@ class Safe_Updates {
   public $alt_heap;
   public $update_logic;
 
+  public static $dropin_target = WP_CONTENT_DIR . '/db.php';
+  public static $dropin_file = __DIR__ . '/db.php';
+
   public static function init() {
     if ( is_null( self::$instance ) ) {
       self::$instance = new Safe_Updates();
@@ -65,10 +68,10 @@ class Safe_Updates {
       add_action( 'admin_notices', array( $this, 'not_configured_notice' ) );
     }
 
-    // configure custom dropin
+    // configure custom dropin file
     register_activation_hook( __FILE__, array( 'Safe_Updates', 'install_custom_dropin' ) );
 
-    // clear all heaps on uninstall
+    // clear all heaps on uninstall and clean up files
     register_uninstall_hook( __FILE__, array( 'Safe_Updates', 'uninstall_cleanup' ) );
   }
 
@@ -94,7 +97,7 @@ class Safe_Updates {
 ?>
 <div class="notice notice-warning is-dismissible">
   <?php $configure_action = 'https://wordpress.org/plugins/wp-safe-updates/installation/'; ?>
-  <p><?php echo wp_sprintf( __('WP Safe Updates is not yet active. Please <a href="%s" target="_blank">configure</a> it.', 'wp-safe-updates'), $configure_action ); ?> <button type="button" class="notice-dismiss"></button></p>
+  <p><?php echo wp_sprintf( __('WP Safe Updates is not yet active. Please copy the <pre>db.php</pre> file inside this plugin to your wp-content directory.', 'wp-safe-updates'), $configure_action ); ?> <button type="button" class="notice-dismiss"></button></p>
 </div>
 <?php
   }
@@ -104,10 +107,9 @@ class Safe_Updates {
    * Configure our custom db.php dropin
    */
   public static function install_custom_dropin() {
-    if ( ! file_exists( WP_CONTENT_DIR . '/db.php' ) ) {
-      $dropin_file = dirname( __FILE__ ) . '/db.php';
-      error_log('Copying ' . $dropin_file . ' -> ' . WP_CONTENT_DIR . '/db.php');
-      @copy( $dropin_file, WP_CONTENT_DIR . '/db.php' );
+    if ( ! file_exists( self::$dropin_target ) ) {
+      error_log('Copying ' . self::$dropin_file . ' -> ' . self::$dropin_target);
+      @copy( self::$dropin_file, self::$dropin_target );
     }
   }
 
@@ -123,6 +125,10 @@ class Safe_Updates {
 
     // Deleting all tmp tables...
     $alt_heap->delete_tmp_wp_tables();
+
+    if ( file_exists( self::$dropin_target ) && hash_file( 'md5', self::$dropin_target ) === hash_file( 'md5', self::$dropin_file )) {
+      @unlink( self::$dropin_target );
+    }
   }
 
   /**
