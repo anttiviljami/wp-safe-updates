@@ -4,7 +4,7 @@ Tags: safe, tested, updates
 Donate link: https://github.com/anttiviljami
 Requires at least: 4.5
 Tested up to: 4.6.1
-Stable tag: 1.1
+Stable tag: 1.2
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
