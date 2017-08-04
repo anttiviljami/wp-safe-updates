@@ -26,7 +26,7 @@
   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-if ( ! class_exists('Safe_Updates') ) :
+if ( ! class_exists( 'Safe_Updates' ) ) :
 
 class Safe_Updates {
   public static $instance;
@@ -50,7 +50,7 @@ class Safe_Updates {
     // load textdomain for translations
     add_action( 'plugins_loaded',  array( $this, 'load_our_textdomain' ) );
 
-    if( function_exists( 'currheap' ) && is_a( $wpdb, 'safe_wpdb' ) ) {
+    if ( function_exists( 'currheap' ) && is_a( $wpdb, 'SafeUpdatesDB' ) ) {
       // plugin is already configured
       require_once 'lib/class-alternative-heap.php';
       require_once 'lib/class-update-logic.php';
@@ -58,11 +58,10 @@ class Safe_Updates {
       $this->alt_heap = Alternative_Heap::init();
       $this->update_logic = Update_Logic::init();
 
-      if( false !== currheap() ) {
+      if ( false !== currheap() ) {
         add_action( 'plugins_loaded', array( $this, 'make_sure_we_are_first' ) );
       }
-    }
-    else {
+    } else {
       // show a notice to prompt the user to configure WP Safe Updates
       // @TODO: offer to do this automatically
       add_action( 'admin_notices', array( $this, 'not_configured_notice' ) );
@@ -81,7 +80,7 @@ class Safe_Updates {
   public function make_sure_we_are_first() {
     $active_plugins = get_option( 'active_plugins' );
     $this_plugin = basename( dirname( __FILE__ ) ) . '/' . basename( __FILE__ );
-    $priority = array_search( $this_plugin, $active_plugins );
+    $priority = array_search( $this_plugin, $active_plugins, true );
 
     if ( 0 !== $priority ) {
       array_splice( $active_plugins, $priority, 1 );
@@ -91,13 +90,26 @@ class Safe_Updates {
   }
 
   /**
-   * shows a notice to prompt the user to configure WP Safe Updates
+   * Shows a notice to prompt the user to configure WP Safe Updates
    */
   public function not_configured_notice() {
 ?>
 <div class="notice notice-warning is-dismissible">
-  <?php $configure_action = 'https://wordpress.org/plugins/wp-safe-updates/installation/'; ?>
-  <p><?php echo wp_sprintf( __('WP Safe Updates is not yet active. Please copy and rename the <code>db.php.txt</code> file from this plugin to <code>wp-content/db.php</code>', 'wp-safe-updates'), $configure_action ); ?> <button type="button" class="notice-dismiss"></button></p>
+  <p>
+    <?php
+    echo wp_sprintf(
+      wp_kses(
+        // translators: %1$s: dropin filename %1$s dropin target
+        __( 'WP Safe Updates is not yet active. Please copy and rename the %1$s file from this plugin to %2$s',
+        'wp-safe-updates' ),
+        '<code>'
+      ),
+      '<code>db.php.txt</code>',
+      '<code>wp-content/db.php</code>'
+    );
+    ?>
+    <button type="button" class="notice-dismiss"></button>
+  </p>
 </div>
 <?php
   }
@@ -108,8 +120,7 @@ class Safe_Updates {
    */
   public static function install_custom_dropin() {
     if ( ! file_exists( self::$dropin_target ) ) {
-      error_log('Copying ' . self::$dropin_file . ' -> ' . self::$dropin_target);
-      @copy( self::$dropin_file, self::$dropin_target );
+      copy( self::$dropin_file, self::$dropin_target );
     }
   }
 
@@ -126,8 +137,11 @@ class Safe_Updates {
     // Deleting all tmp tables...
     $alt_heap->delete_tmp_wp_tables();
 
-    if ( file_exists( self::$dropin_target ) && hash_file( 'md5', self::$dropin_target ) === hash_file( 'md5', self::$dropin_file )) {
-      @unlink( self::$dropin_target );
+    if (
+      file_exists( self::$dropin_target ) &&
+      hash_file( 'md5', self::$dropin_target ) === hash_file( 'md5', self::$dropin_file )
+    ) {
+      unlink( self::$dropin_target );
     }
   }
 
@@ -135,7 +149,7 @@ class Safe_Updates {
    * Load our textdomain
    */
   public static function load_our_textdomain() {
-    load_plugin_textdomain( 'wp-safe-updates', false, dirname( plugin_basename(__FILE__) ) . '/lang/' );
+    load_plugin_textdomain( 'wp-safe-updates', false, dirname( plugin_basename( __FILE__ ) ) . '/lang/' );
   }
 }
 
@@ -143,4 +157,3 @@ endif;
 
 // init the plugin
 $safe_updates = Safe_Updates::init();
-
